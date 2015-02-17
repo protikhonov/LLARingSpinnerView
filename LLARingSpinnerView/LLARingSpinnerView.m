@@ -38,27 +38,27 @@ static NSString *kLLARingSpinnerAnimationKey = @"llaringspinnerview.rotation";
 
 - (void)initialize {
     _timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-
+    
     [self.layer addSublayer:self.progressLayer];
 }
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-
+    
     self.progressLayer.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
     [self updatePath];
 }
 
 - (void)tintColorDidChange {
     [super tintColorDidChange];
-
+    
     self.progressLayer.strokeColor = self.tintColor.CGColor;
 }
 
 - (void)startAnimating {
     if (self.isAnimating)
         return;
-
+    
     CABasicAnimation *animation = [CABasicAnimation animation];
     animation.keyPath = @"transform.rotation";
     animation.duration = 1.0f;
@@ -66,7 +66,7 @@ static NSString *kLLARingSpinnerAnimationKey = @"llaringspinnerview.rotation";
     animation.toValue = @(2 * M_PI);
     animation.repeatCount = INFINITY;
     animation.timingFunction = self.timingFunction;
-
+    
     [self.progressLayer addAnimation:animation forKey:kLLARingSpinnerAnimationKey];
     self.isAnimating = true;
     
@@ -78,7 +78,7 @@ static NSString *kLLARingSpinnerAnimationKey = @"llaringspinnerview.rotation";
 - (void)stopAnimating {
     if (!self.isAnimating)
         return;
-
+    
     [self.progressLayer removeAnimationForKey:kLLARingSpinnerAnimationKey];
     self.isAnimating = false;
     
@@ -91,14 +91,20 @@ static NSString *kLLARingSpinnerAnimationKey = @"llaringspinnerview.rotation";
 
 - (void)updatePath {
     CGPoint center = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-    CGFloat radius = MIN(CGRectGetWidth(self.bounds) / 2, CGRectGetHeight(self.bounds) / 2) - self.progressLayer.lineWidth / 2;
     CGFloat startAngle = (CGFloat)(-M_PI_4);
     CGFloat endAngle = (CGFloat)(3 * M_PI_2);
-    UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:center radius:radius startAngle:startAngle endAngle:endAngle clockwise:YES];
+    UIBezierPath *path = [UIBezierPath bezierPathWithArcCenter:center radius:self.radius startAngle:startAngle endAngle:endAngle clockwise:YES];
     self.progressLayer.path = path.CGPath;
 }
 
 #pragma mark - Properties
+
+- (CGFloat)radius {
+    if (!_radius) {
+        _radius = MIN(CGRectGetWidth(self.bounds) / 2, CGRectGetHeight(self.bounds) / 2) - self.progressLayer.lineWidth / 2;
+    }
+    return _radius;
+}
 
 - (CAShapeLayer *)progressLayer {
     if (!_progressLayer) {

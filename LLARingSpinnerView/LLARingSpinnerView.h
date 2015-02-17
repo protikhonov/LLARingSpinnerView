@@ -14,6 +14,7 @@
 @property (nonatomic) BOOL hidesWhenStopped;
 @property (nonatomic, strong) CAMediaTimingFunction *timingFunction;
 @property (nonatomic, readonly) BOOL isAnimating;
+@property (nonatomic, assign) CGFloat radius;
 
 - (void)startAnimating;
 - (void)stopAnimating;
